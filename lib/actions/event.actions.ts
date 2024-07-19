@@ -15,8 +15,8 @@ import Event from "@/lib/database/models/event.model";
 import User from "@/lib/database/models/user.model";
 import { handleError } from "@/lib/utils";
 
-const getCategoriesByName = async (name: string) => {
-  return Category.findOne({ name: { $regex: name, $option: "i" } });
+const getCategoryByName = async (name: string) => {
+  return Category.findOne({ name: { $regex: name, $options: "i" } });
 };
 
 const populateEvent = async (query: any) => {
@@ -126,26 +126,26 @@ export const getAllEvent = async ({
     await connectToDatabase();
 
     const titleCondition = query
-      ? { title: { $regex: query, $option: "i" } }
+      ? { title: { $regex: query, $options: "i" } }
       : {};
     const categoryCondition = category
-      ? await getCategoriesByName(category)
+      ? await getCategoryByName(category)
       : null;
-
-    const condition = {
+    const conditions = {
       $and: [
         titleCondition,
         categoryCondition ? { category: categoryCondition._id } : {},
       ],
     };
 
-    const eventsQuery = Event.find(condition)
+    const skipAmount = (Number(page) - 1) * limit;
+    const eventsQuery = Event.find(conditions)
       .sort({ createdAt: "desc" })
-      .skip(0)
+      .skip(skipAmount)
       .limit(limit);
 
     const events = await populateEvent(eventsQuery);
-    const eventsCount = await Event.countDocuments(condition);
+    const eventsCount = await Event.countDocuments(conditions);
 
     return {
       data: JSON.parse(JSON.stringify(events)),
