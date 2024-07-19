@@ -45,7 +45,7 @@ const Collection = ({
 
           {totalPages > 1 && (
             <Pagination
-              urlParamName={urlParamName}
+              urlParamName={urlParamName as string}
               page={page}
               totalPages={totalPages}
             />
