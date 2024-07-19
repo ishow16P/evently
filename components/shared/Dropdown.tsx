@@ -59,8 +59,8 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
         {categories.length > 0 &&
           categories.map((category) => (
             <SelectItem
-              key={category._id}
-              value={category._id}
+              key={category._id as string}
+              value={category._id as string}
               className="select-item p-regular-14"
             >
               {category.name}
